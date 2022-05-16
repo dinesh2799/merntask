@@ -88,6 +88,10 @@ const registerUser = asynchandler(async(req,res) => {
                 _id:user.id,
                 name:user.name,
                 email:user.email,
+                phone:user.phone,
+                gender:user.gender,
+                address:user.address,
+                dob:updated.dob,
                 token: generateToken(user._id)
             })
         }
@@ -116,6 +120,9 @@ const loginUser = asynchandler(async(req,res) => {
             name:user.name,
             email:user.email,
             phone:user.phone,
+            gender:user.gender,
+            address:user.address,
+            dob:user.dob,
             token: generateToken(user._id)
         })
     }
@@ -128,11 +135,11 @@ const loginUser = asynchandler(async(req,res) => {
 })
 
 const getUser = asynchandler(async(req,res) => {
-    const {_id,name,email,phone} = await User.findById(req.user.id)
+    const {_id,name,email,phone,gender,address,dob} = await User.findById(req.user.id)
 
     res.status(200).json({
         id: _id,
-        name,email,phone
+        name,email,phone,gender,address,dob
     })
     // res.json({message:'register User'})
 })
@@ -148,9 +155,10 @@ const editUser = asynchandler(async(req,res) =>{
     })
 
     res.status(200).json({
-        name:updated.name,email:updated.email,phone:updated.phone
+        name:updated.name,email:updated.email,phone:updated.phone,gender:updated.gender,address:updated.address,dob:updated.dob
     })
 })
+
 
 
 const generateToken = (id) => {

@@ -6,22 +6,27 @@ import { toast } from 'react-toastify'
 import { editUser,reset } from '../features/auth/authSlice'
 // import { FaUser} from 'react-icons/fa'
 import Spinner from '../components/Spinner'
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
 
 const EditProfile = ({data}) => {
-    console.log(data)
     
     const [formData, setFormData] = useState({
         id: data._id,
         name: data.name,
         email : data.email,
         phone: data.phone,
+        gender: data.gender,
+        address: data.address,
+        dob: data.dob,
         // password : '',
     })
     // setFormData(data);
     // const [setInput, setpostData] = useState([]);
     // setpostData(data)
-
-    const {id,name,email, phone} = formData
+    const [dob, setDate] = useState(new Date());
+    const {id,name,email, phone, gender, address} = formData
 
     const navigate = useNavigate()
     const dispatch = useDispatch()
@@ -58,9 +63,12 @@ const EditProfile = ({data}) => {
             id,
             name,
             email,
-            phone
+            phone,
+            gender,
+            address,
+            dob
           }
-          console.log(userData)
+          console.log('User:',userData)
       
           dispatch(editUser(userData))
     }
@@ -81,6 +89,28 @@ const EditProfile = ({data}) => {
                     <input type="email" className="form-control" id="email" name="email" value={email} placeholder="Enter your Email" onChange={onChange}/>
                     <label>Phone</label>
                     <input type="number" className="form-control" id="phone" name="phone" value={phone} placeholder="Enter your phone number" onChange={onChange}/>
+                    <label>Date of Birth</label>
+                    <DatePicker
+                        selected={dob}
+                        value={dob}
+                        onChange={(date) => setDate(date)}
+                        // onClickOutside={this.datePickerValue}
+                        // maxDate={new Date()}
+                        dateFormat="dd-MM-yyyy"
+                        yearDropdownItemNumber={80}
+                        scrollableYearDropdown={true}
+                        showYearDropdown
+                        showMonthDropdown
+                        isClearable
+                    />
+                    <label>Gender</label>
+                    <select className="form-control" id="gender" name="gender" value={gender} onChange={onChange}>
+                      <option>SELECT</option>
+                      <option  value='male'>Male</option>
+                      <option  value='female'>Female</option>
+                    </select>
+                    <label>Address</label>
+                    <input type="text" className="form-control" id="address" name="address" value={address} placeholder="Enter your Address" onChange={onChange}/>
                     {/* <input type="password" className="form-control" id="password" name="password" value={password} placeholder="Enter your password" />
                     <input type="password" className="form-control" id="password2" name="password2" value={password2} placeholder="Confirm Password" /> */}
                 </div>
@@ -94,5 +124,14 @@ const EditProfile = ({data}) => {
     </div>
   )
 }
+
+// const [startDate, setStartDate] = useState(new Date());
+//   return (
+//     <DatePicker
+//       selected={startDate}
+//       onChange={(date) => setStartDate(date)}
+//       isClearable
+//       placeholderText="I have been cleared!"
+//     />
 
 export default EditProfile

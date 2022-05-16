@@ -18,6 +18,16 @@ const userSchema = mongoose.Schema({
         type: Number,
         required: [true,'Please enter phone number']
     },
+    dob:{
+        type: Date,
+    },
+    gender:{
+        type: String,
+    },
+    address:{
+        type: String,
+    }
+    
     
 },
 {

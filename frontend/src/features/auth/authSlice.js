@@ -108,6 +108,9 @@ export const authSlice = createSlice({
         state.user.name = action.payload.name
         state.user.email = action.payload.email
         state.user.phone = action.payload.phone
+        state.user.gender = action.payload.gender
+        state.user.address= action.payload.address
+        state.user.dob= action.payload.dob
     })
     .addCase(editUser.rejected, (state,action)=>{
         state.isLoading=false
