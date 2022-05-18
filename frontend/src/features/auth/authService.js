@@ -43,6 +43,17 @@ const editUser = async(postData, token, userId) => {
     return response.data
 }
 
+const getUser = async(token) => {
+    const config = {
+        headers : {
+            Authorization : `Bearer ${token}`
+        }
+    }
+
+    const response = await axios.get(API_URL + 'user' , config)
+    return response.data
+}
+
 
 
 const logout = () => {
@@ -50,7 +61,7 @@ const logout = () => {
 }
 
 const authService = {
-    register,logout,login,editUser
+    register,logout,login,editUser,getUser
 }
 
 export default authService

@@ -1,9 +1,12 @@
+
+
+
 import React from 'react'
 import {useState, useEffect} from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { editUser,reset } from '../features/auth/authSlice'
+import { editUser,reset} from '../features/auth/authSlice'
 // import { FaUser} from 'react-icons/fa'
 import Spinner from '../components/Spinner'
 import DatePicker from "react-datepicker";
@@ -11,7 +14,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 const EditProfile = ({data}) => {
-    
+  const {userdata} =useSelector((state) => state.auth)
+  console.log("DATA",userdata)
     const [formData, setFormData] = useState({
         id: data._id,
         name: data.name,
@@ -22,11 +26,13 @@ const EditProfile = ({data}) => {
         dob: data.dob,
         // password : '',
     })
+
     // setFormData(data);
     // const [setInput, setpostData] = useState([]);
     // setpostData(data)
-    const [dob, setDate] = useState(new Date());
-    const {id,name,email, phone, gender, address} = formData
+    
+    const [dob, setDate] = useState(new Date(data.dob));
+    const {id,name,email, phone, gender, address} = formData 
 
     const navigate = useNavigate()
     const dispatch = useDispatch()
@@ -40,9 +46,9 @@ const EditProfile = ({data}) => {
         toast.error(message)
       }
   
-    //   if (isSuccess || user) {
-    //     navigate('/')
-    //   }
+      if (isSuccess ) {
+        navigate('/')
+      }
   
       dispatch(reset())
     }, [user, isError, isSuccess, message, navigate, dispatch])
@@ -83,11 +89,11 @@ const EditProfile = ({data}) => {
         <section className="form">
             <form onSubmit={onSubmit}>
                 <div className="form-group">
-                    <label>Name</label>
+                    <label>Name<span style={{color: "red"}}>*</span></label>
                     <input type="text" className="form-control" id="name" name="name" value={name} placeholder="Enter your Name" onChange={onChange}/>
-                    <label>Email</label>
+                    <label>Email<span style={{color: "red"}}>*</span></label>
                     <input type="email" className="form-control" id="email" name="email" value={email} placeholder="Enter your Email" onChange={onChange}/>
-                    <label>Phone</label>
+                    <label>Phone<span style={{color: "red"}}>*</span></label>
                     <input type="number" className="form-control" id="phone" name="phone" value={phone} placeholder="Enter your phone number" onChange={onChange}/>
                     <label>Date of Birth</label>
                     <DatePicker
@@ -115,9 +121,11 @@ const EditProfile = ({data}) => {
                     <input type="password" className="form-control" id="password2" name="password2" value={password2} placeholder="Confirm Password" /> */}
                 </div>
                 <div className="form-group">
+                  {!name || !email || !phone ? <span style={{color: "red"}}>Enter all the required fields</span> : 
                     <button className='btn btn-block' type='submit'>
                         Submit
                     </button>
+                    }
                 </div>
             </form>
         </section>

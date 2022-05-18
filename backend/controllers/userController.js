@@ -3,7 +3,11 @@ const bcrypt = require('bcryptjs')
 const asynchandler = require('express-async-handler')
 const User = require('../models/userModel')
 const emailValidator = require('deep-email-validator')
- 
+var passwordValidator = require('password-validator')
+const validatePhoneNumber = require('validate-phone-number-node-js');
+
+
+
 async function isEmailValid(email) {
  return emailValidator.validate(email)
 }
@@ -31,6 +35,26 @@ const registerUser = asynchandler(async(req,res) => {
     const {valid, reason, validators} = await isEmailValid({email})
  
     if (valid){
+        var schema = new passwordValidator();
+        schema
+        .is().min(8)                                    // Minimum length 8
+        .is().max(100)                                  // Maximum length 100
+        .has().uppercase()                              // Must have uppercase letters
+        .has().lowercase()                              // Must have lowercase letters
+        .has().digits(1)                                // Must have at least 2 digits
+        .has().not().spaces()                           // Should not have spaces
+        // .is().not().oneOf(['Passw0rd', 'Password123']) // Blacklist these values
+        if(schema.validate(password) === false){
+            res.status(400)
+            throw new Error('Password Rules: Minimum length 8 & Must have uppercase and lowercase letters & Must have at least 1 digit & Should not have spaces')
+        }
+
+        if(validatePhoneNumber.validate(phone) === false)
+        {
+            res.status(400)
+            throw new Error(' Enter valid phone number')
+        }
+
         console.log("Valid")
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(password,salt)
@@ -91,7 +115,7 @@ const registerUser = asynchandler(async(req,res) => {
                 phone:user.phone,
                 gender:user.gender,
                 address:user.address,
-                dob:updated.dob,
+                dob:user.dob,
                 token: generateToken(user._id)
             })
         }
@@ -150,6 +174,35 @@ const editUser = asynchandler(async(req,res) =>{
         res.status(400)
         throw new Error('Not authorized');
     } 
+    const userData = await User.findById(req.user.id);
+    if(!req.body.name|| !req.body.email || !req.body.phone )
+    {
+        res.status(400)
+        throw new Error('Fields are missing')
+    }
+    if(req.body.email !== userData.email){
+        const {valid, reason, validators} = await isEmailValid(req.body.email)
+        if(valid)
+        {
+            console.log("Valid email")
+        }
+        else{
+            // req.body.email = userData.email
+            res.status(400)
+            throw new Error('Data not saved. Invalid Email Address');
+        }
+    }
+    if(req.body.phone !== userData.phone )
+        {
+            if(validatePhoneNumber.validate(req.body.phone) === false)
+            {
+                // req.body.phone = userData.phone
+                res.status(400)
+                throw new Error('Data not saved. Enter valid phone number')
+                
+            }
+        }
+    
     const updated = await User.findByIdAndUpdate(req.params.id, req.body,{
         new: true,
     })
@@ -158,7 +211,6 @@ const editUser = asynchandler(async(req,res) =>{
         name:updated.name,email:updated.email,phone:updated.phone,gender:updated.gender,address:updated.address,dob:updated.dob
     })
 })
-
 
 
 const generateToken = (id) => {
