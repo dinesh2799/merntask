@@ -51,8 +51,10 @@ const updatePost =asynchandler( async (req,res) => {
     const updated = await Post.findByIdAndUpdate(req.params.id, req.body,{
         new: true,
     })
+    const posts = await Post.find({user: req.user.id})
 
-    res.status(200).json(updated)
+    res.status(200).json(posts)
+    // res.status(200).json(updated)
 })
 
 const deletePost = asynchandler( async (req,res) => {

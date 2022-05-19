@@ -180,6 +180,11 @@ const editUser = asynchandler(async(req,res) =>{
         res.status(400)
         throw new Error('Fields are missing')
     }
+    // if(req.body.dob)
+    // {
+    //     const date = require('date-and-time')
+    //     req.body.dob =  date.format(req.body.dob,'dd-MM-yyyy');
+    // }
     if(req.body.email !== userData.email){
         const {valid, reason, validators} = await isEmailValid(req.body.email)
         if(valid)
@@ -189,7 +194,7 @@ const editUser = asynchandler(async(req,res) =>{
         else{
             // req.body.email = userData.email
             res.status(400)
-            throw new Error('Data not saved. Invalid Email Address');
+            throw new Error('Invalid Email Address');
         }
     }
     if(req.body.phone !== userData.phone )
@@ -198,7 +203,7 @@ const editUser = asynchandler(async(req,res) =>{
             {
                 // req.body.phone = userData.phone
                 res.status(400)
-                throw new Error('Data not saved. Enter valid phone number')
+                throw new Error(' Enter valid phone number')
                 
             }
         }

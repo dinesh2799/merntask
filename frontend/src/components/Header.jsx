@@ -20,8 +20,8 @@ const Header = () => {
 
   return (
     <header className='header'>
-        <div className='logo'>
-            <Link to="/">Posts</Link>
+        <div className='logo heading'>
+            <Link to="/">PostsApp</Link>
         </div>
         <ul>
             {user? (<>
