@@ -1,5 +1,6 @@
 import axios from "axios"
 const API_URL ='/api/users/'
+const API_FILE_URL = '/api/file/'
 
 const register = async(userData) => {
     const response = await axios.post(API_URL, userData)
@@ -43,6 +44,17 @@ const editUser = async(postData, token, userId) => {
     return response.data
 }
 
+const profilePicture = async(postData, token) => {
+    const config = {
+        headers : {
+            Authorization : `Bearer ${token}`
+        }
+    }
+
+    const response = await axios.post(API_FILE_URL + 'upload/' + postData.id, postData, config)
+    return response.data
+}
+
 const getUser = async(token) => {
     const config = {
         headers : {
@@ -61,7 +73,7 @@ const logout = () => {
 }
 
 const authService = {
-    register,logout,login,editUser,getUser
+    register,logout,login,editUser,getUser,profilePicture
 }
 
 export default authService

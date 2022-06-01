@@ -5,7 +5,8 @@ const User = require('../models/userModel')
 const emailValidator = require('deep-email-validator')
 var passwordValidator = require('password-validator')
 const validatePhoneNumber = require('validate-phone-number-node-js');
-
+const multer = require('multer');
+const { v4: uuidv4 } = require('uuid');
 
 
 async function isEmailValid(email) {
@@ -16,6 +17,50 @@ async function isEmailValid(email) {
 const hbs = require('nodemailer-express-handlebars')
 const nodemailer = require('nodemailer')
 const path = require('path')
+
+// const storage = multer.diskStorage({
+//     destination: function(req, file, cb) {
+//         cb(null, 'images');
+//     },
+//     filename: function(req, file, cb) {   
+//         cb(null, uuidv4() + '-' + Date.now() + path.extname(file.originalname));
+//     }
+// });
+
+// const fileFilter = (req, file, cb) => {
+//     const allowedFileTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+//     if(allowedFileTypes.includes(file.mimetype)) {
+//         cb(null, true);
+//     } else {
+//         cb(null, false);
+//     }
+// }
+
+// let upload = multer({ storage, fileFilter });
+
+// const profilePicture = asynchandler(async(req,res)=>{
+
+// })
+
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+       cb(null, 'images');
+    },
+    filename: function (req, file, cb) {
+       cb(null, Date.now() + '-' + file.originalname);
+    }
+ });
+ var upload = multer({ storage: storage });
+//  app.post('/api/image-upload', upload.single('image'),(req, res) => {
+//     const image = req.image;
+// res.json({message:'register User'})
+//       res.send(apiResponse({message: 'File uploaded successfully.', image}));
+//   });
+//   function apiResponse(results){
+//       return JSON.stringify({"status": 200, "error": null, "response": results});
+//   }
+// const profile = async()
+
 
 const registerUser = asynchandler(async(req,res) => {
     const {name,email,phone,password} = req.body
@@ -33,8 +78,10 @@ const registerUser = asynchandler(async(req,res) => {
     }
 
     const {valid, reason, validators} = await isEmailValid({email})
+    // var validator = require("node-email-validation");
  
-    if (valid){
+    // const valid = validator.is_email_valid({email});
+    if (valid || !valid){
         var schema = new passwordValidator();
         schema
         .is().min(8)                                    // Minimum length 8
@@ -71,7 +118,7 @@ const registerUser = asynchandler(async(req,res) => {
                     service: 'gmail',
                     auth:{
                         user: 'dineshchevvakula24@gmail.com',
-                        pass: 'Deadpool2799'
+                        pass: 'Dinesh@2799'
                     }
                 }
             );
@@ -105,6 +152,7 @@ const registerUser = asynchandler(async(req,res) => {
                 if(error){
                     return console.log(error);
                 }
+                
                 console.log('Message sent: ' + info.response);
             });
             
@@ -113,9 +161,9 @@ const registerUser = asynchandler(async(req,res) => {
                 name:user.name,
                 email:user.email,
                 phone:user.phone,
-                gender:user.gender,
-                address:user.address,
-                dob:user.dob,
+                gender:'',
+                address:'',
+                dob:'2022-05-18',
                 token: generateToken(user._id)
             })
         }
@@ -160,6 +208,7 @@ const loginUser = asynchandler(async(req,res) => {
 
 const getUser = asynchandler(async(req,res) => {
     const {_id,name,email,phone,gender,address,dob} = await User.findById(req.user.id)
+    
 
     res.status(200).json({
         id: _id,
@@ -168,7 +217,35 @@ const getUser = asynchandler(async(req,res) => {
     // res.json({message:'register User'})
 })
 
-const editUser = asynchandler(async(req,res) =>{
+// User.find({}, 'firstName lastName picture', function(error, data) {
+// if (error) {
+//     return res.status(500).send({
+//         msg: 'Error while finding records',
+//         data: []
+//     })
+// } else {
+//     return res.send(200).send({
+//             msg: 'recods found',
+//             data: data
+//         })
+//   }
+// });
+
+const getAllUsers = asynchandler(async(req,res) => {
+    // const users = await User.find().populate()
+const users = await User.find({ id: { $ne: req.user.id } }).select([
+    "name",
+    "email",
+    "phone"
+]);
+    
+    // const users=1
+    res.status(200).json(users)
+})  
+
+// const editUser = asynchandler(upload.single('photo'),async(req,res) =>{
+    const editUser = asynchandler(async(req,res) =>{
+    console.log(req)
     if(req.user.id !== req.params.id)
     {
         res.status(400)
@@ -229,5 +306,5 @@ const generateToken = (id) => {
 
 
 module.exports={
-    registerUser,loginUser,getUser,editUser
+    registerUser,loginUser,getUser,editUser,getAllUsers
 }

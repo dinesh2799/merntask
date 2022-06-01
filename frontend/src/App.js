@@ -8,6 +8,7 @@ import Register from './pages/Register';
 import Header from './components/Header';
 import EditProfile from './pages/EditProfile';
 import {useSelector} from 'react-redux'
+import Profile from './pages/Profile';
 
 function App() {
   const {user} =useSelector((state) => state.auth)
@@ -22,6 +23,7 @@ function App() {
            <Route path="/login" element= {<Login/>} />
           <Route path = '/register' element = {<Register/>} />  
           <Route path='/editprofile' element ={<EditProfile data={user} />} />
+          <Route path='/profilepicture' element ={<Profile  />} />
           
         </Routes> 
       </div>

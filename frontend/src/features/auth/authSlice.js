@@ -19,6 +19,7 @@ export const register = createAsyncThunk('auth/register', async(user, thunkAPI) 
         return thunkAPI.rejectWithValue(message)
     }
 })
+
 export const login = createAsyncThunk('auth/login', async (user, thunkAPI) => {
     try {
       return await authService.login(user)
@@ -60,6 +61,16 @@ export const getUser = createAsyncThunk('auth/getUser', async(thunkAPI) => {
     }
 })
 
+export const profilePicture = createAsyncThunk('auth/profilePicture',async(postData, thunkAPI) => {
+  try{
+      const token = thunkAPI.getState().auth.user.token
+      return await authService.profilePicture(postData,token)
+  }
+  catch(error){
+      const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+      return thunkAPI.rejectWithValue(message)
+  }
+})
 
 export const logout = createAsyncThunk('auth/logout', async()=> {
     await authService.logout()
@@ -121,6 +132,7 @@ export const authSlice = createSlice({
         state.user.gender = action.payload.gender
         state.user.address= action.payload.address
         state.user.dob= action.payload.dob
+        // localStorage.setItem('state', serializedState);
     })
     .addCase(editUser.rejected, (state,action)=>{
         state.isLoading=false
@@ -128,17 +140,25 @@ export const authSlice = createSlice({
         state.message = action.payload
         // state.user = action.payload
     })
-    // .addCase(getUser.fulfilled, (state, action) => {
-    //   state.isLoading = false
-    //   state.isSuccess = true
-    //   state.user = action.payload
-    // })
-    // .addCase(getUser.rejected, (state, action) => {
-    //   state.isLoading = false
-    //   state.isError = true
-    //   state.message = action.payload
-    //   // state.user = null
-    // })
+    .addCase(profilePicture.pending, (state)=> {
+      state.isLoading=true
+  })
+  .addCase(profilePicture.fulfilled, (state,action)=>{
+      state.isLoading=false
+      state.isSuccess=true
+      // state.user.name = action.payload.name
+      // state.user.email = action.payload.email
+      // state.user.phone = action.payload.phone
+      // state.user.gender = action.payload.gender
+      // state.user.address= action.payload.address
+      // state.user.dob= action.payload.dob
+  })
+  .addCase(profilePicture.rejected, (state,action)=>{
+      state.isLoading=false
+      state.isError=true
+      state.message = action.payload
+      // state.user = action.payload
+  })
     }
 })
 

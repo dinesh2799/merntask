@@ -4,7 +4,7 @@
 import React from 'react'
 import {useState, useEffect} from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import {Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { editUser,reset} from '../features/auth/authSlice'
 // import { FaUser} from 'react-icons/fa'
@@ -24,6 +24,7 @@ const EditProfile = ({data}) => {
         gender: data.gender,
         address: data.address,
         dob: data.dob,
+        photo: ''
         // password : '',
     })
 
@@ -32,7 +33,7 @@ const EditProfile = ({data}) => {
     // setpostData(data)
     
     const [dob, setDate] = useState(new Date(data.dob));
-    const {id,name,email, phone, gender, address} = formData 
+    const {id,name,email, phone, gender, address, photo} = formData 
 
     const navigate = useNavigate()
     const dispatch = useDispatch()
@@ -72,12 +73,17 @@ const EditProfile = ({data}) => {
             phone,
             gender,
             address,
-            dob
+            dob,
+            photo
           }
           console.log('User:',userData)
       
           dispatch(editUser(userData))
     }
+
+    const handlePhoto = (e) => {
+      setFormData({...formData, photo: e.target.files[0]});
+  }
 
     if (isLoading) {
         return <Spinner />
@@ -86,6 +92,7 @@ const EditProfile = ({data}) => {
   return (
     <div>
         <h1>Edit Profile</h1>
+        <Link to="/profilepicture"> Upload Profile Picture </Link>
         <section className="form">
             <form onSubmit={onSubmit}>
                 <div className="form-group">
@@ -119,6 +126,13 @@ const EditProfile = ({data}) => {
                     <input type="text" className="form-control" id="address" name="address" value={address} placeholder="Enter your Address" onChange={onChange}/>
                     {/* <input type="password" className="form-control" id="password" name="password" value={password} placeholder="Enter your password" />
                     <input type="password" className="form-control" id="password2" name="password2" value={password2} placeholder="Confirm Password" /> */}
+                    <label>Upload Image</label>
+                    <input 
+                        type="file" 
+                        accept=".png, .jpg, .jpeg"
+                        name="photo"
+                        onChange={handlePhoto}
+                    />
                 </div>
                 <div className="form-group">
                   {!name || !email || !phone ? <span style={{color: "red"}}>Enter all the required fields</span> : 
