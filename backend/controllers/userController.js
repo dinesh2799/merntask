@@ -289,8 +289,19 @@ const users = await User.find({ id: { $ne: req.user.id } }).select([
         new: true,
     })
 
+    // res.status(200).json({
+    //     name:updated.name,email:updated.email,phone:updated.phone,gender:updated.gender,address:updated.address,dob:updated.dob
+    // })
+
     res.status(200).json({
-        name:updated.name,email:updated.email,phone:updated.phone,gender:updated.gender,address:updated.address,dob:updated.dob
+        _id:userData.id,
+        name:updated.name,
+        email:updated.email,
+        phone:updated.phone,
+        gender:updated.gender,
+        address:updated.address,
+        dob:updated.dob,
+        token: generateToken(userData.id)
     })
 })
 

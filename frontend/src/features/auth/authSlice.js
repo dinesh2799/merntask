@@ -132,6 +132,7 @@ export const authSlice = createSlice({
         state.user.gender = action.payload.gender
         state.user.address= action.payload.address
         state.user.dob= action.payload.dob
+        localStorage.setItem('user', JSON.stringify(action.payload))
         // localStorage.setItem('state', serializedState);
     })
     .addCase(editUser.rejected, (state,action)=>{
