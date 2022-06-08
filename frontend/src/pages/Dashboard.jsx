@@ -22,7 +22,7 @@ function Dashboard() {
 
         if(user)
         {
-            // dispatch(getPosts())
+            dispatch(getPosts())
         }
 
         if(!user){
